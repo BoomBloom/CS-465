@@ -4,6 +4,32 @@ Welcome to the **Travlr Getaways** web application repository for **CS 465 (Full
 
 ---
 
+## Module Three: Static HTML to Templates with JSON
+
+In this module, the customer-facing web application was transitioned from static HTML content to dynamic data-driven rendering using **JSON (JavaScript Object Notation)** and the **Handlebars (HBS)** templating engine within an Express Model-View-Controller (MVC) architecture.
+
+### Objectives Achieved
+1. **Dynamic JSON Data Layer:**
+   - Extracted hardcoded destination trip items from static HTML into a structured JSON dataset (`data/trips.json` and root `trips.json`).
+   - Defined structured properties for each dive site/trip package: `name`, `image`, and `description`.
+   - Embedded verification indicators (`from datafile`) within destination descriptions to verify live JSON data ingestion versus legacy static markup.
+2. **Controller File System Integration (MVC):**
+   - Updated `app_server/controllers/travel.js` to utilize Node.js's built-in file system module (`fs`).
+   - Implemented synchronous file reading (`fs.readFileSync`) and parsing (`JSON.parse`) to load `trips.json` into memory.
+   - Passed the parsed `trips` array as template context into `res.render('travel', { title: 'Travlr Getaways', trips })`.
+3. **Handlebars (HBS) Dynamic Iteration:**
+   - Refactored `app_server/views/travel.hbs` to replace redundant static `<li>` cards with the Handlebars `{{#each trips}}` block helper.
+   - Bound destination images and titles dynamically using `{{this.image}}` and `{{this.name}}`.
+   - Utilized triple-brace expressions (`{{{this.description}}}`) to correctly render formatted multi-paragraph HTML descriptions without entity escaping.
+   - Maintained modular page composition via partial includes `{{> header }}` and `{{> footer }}`.
+4. **Testing & Verification:**
+   - Validated that navigating to `http://localhost:3000/travel` returns HTTP 200 OK.
+   - Confirmed full rendering of all trip cards dynamically populated from the JSON data file.
+   - Verified that all partials (header navigation bar with active styling and footer links) render seamlessly alongside dynamic data.
+   - Captured full-page verification screenshot saved to `screenshots/Module3_Express_Dynamic_JSON_Travel_Page.png`.
+
+---
+
 ## Module Two: Model View Controller (MVC) Routing & Handlebars Templating
 
 In this module, the web application was refactored from serving static HTML pages to a clean **Model-View-Controller (MVC)** architectural pattern using Express routing and the **Handlebars (HBS)** templating engine.
@@ -41,7 +67,7 @@ In the initial module, the customer-facing web application shell was established
 
 ---
 
-## Project Structure (Module Two)
+## Project Structure (Module Three)
 
 ```text
 travlr/
@@ -50,12 +76,15 @@ travlr/
 ├── app.js                       # Main Express application configuration & middleware setup
 ├── bin/
 │   └── www                      # Server entry point and HTTP port listener
+├── data/
+│   └── trips.json               # Dynamic JSON dataset containing trip package records
+├── trips.json                   # Root dataset copy for submission package compatibility
 ├── package.json                 # Project metadata, scripts, and dependencies
 ├── package-lock.json
 ├── app_server/                  # MVC Server Architecture
 │   ├── controllers/             # Controller logic handling requests and rendering views
 │   │   ├── main.js              # Controller for home page
-│   │   └── travel.js            # Controller for travel page
+│   │   └── travel.js            # Controller for travel page (reads & parses trips.json)
 │   ├── routes/                  # Express route definitions
 │   │   ├── index.js             # Routes for home
 │   │   ├── travel.js            # Routes for /travel
@@ -63,7 +92,7 @@ travlr/
 │   └── views/                   # Dynamic Handlebars template views
 │       ├── error.hbs            # Error template
 │       ├── index.hbs            # Default home template
-│       ├── travel.hbs           # Dynamic Travel page using HBS directives
+│       ├── travel.hbs           # Dynamic Travel page with {{#each trips}} iteration
 │       ├── layouts/             # Template layout wrappers
 │       │   └── layout.hbs       # Base layout
 │       └── partials/            # Reusable UI fragments
@@ -83,7 +112,9 @@ travlr/
 │   ├── javascripts/
 │   └── stylesheets/
 └── screenshots/                 # Verification screenshots for assignment submission
-    └── Module1_Express_Working.png
+    ├── Module1_Express_Working.png
+    ├── Module2_Express_Travel_Page.png
+    └── Module3_Express_Dynamic_JSON_Travel_Page.png
 ```
 
 ---
@@ -100,9 +131,9 @@ travlr/
    git clone https://github.com/BoomBloom/CS-465.git
    cd CS-465
    ```
-2. Switch to the `module2` branch:
+2. Switch to the `module3` branch:
    ```bash
-   git checkout module2
+   git checkout module3
    ```
 3. Install dependencies:
    ```bash
@@ -125,7 +156,7 @@ http://localhost:3000/
 ```
 
 ### Navigating Pages
-* **Dynamic Travel Page (MVC / HBS):** `http://localhost:3000/travel`
+* **Dynamic Travel Page (HBS + JSON Data):** `http://localhost:3000/travel`
 * **Home:** `http://localhost:3000/` or `http://localhost:3000/index.html`
 * **Rooms:** `http://localhost:3000/rooms.html`
 * **Meals:** `http://localhost:3000/meals.html`
@@ -140,7 +171,7 @@ Each course module builds progressively upon the previous one using dedicated br
 * `main`: Repository baseline.
 * `module1`: Static HTML shell in Express.js.
 * `module2`: Refactoring to MVC architecture (`app_server` with controllers, routes, and Handlebars templates).
-* `module3` *(upcoming)*: Static HTML to templates with JSON.
+* `module3`: Static HTML to templates with dynamic JSON (`data/trips.json` & Handlebars `{{#each}}`).
 * `module4` *(upcoming)*: Database integration with MongoDB and Mongoose schemas.
 * `module5` *(upcoming)*: RESTful API development (`app_api`).
 * `module6` - `module7` *(upcoming)*: Angular Single-Page Application (SPA) admin interface and authentication.
