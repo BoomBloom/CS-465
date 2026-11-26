@@ -4,6 +4,24 @@ Welcome to the **Travlr Getaways** web application repository for **CS 465 (Full
 
 ---
 
+## Module Five: Separation of Concerns & RESTful API Refactoring
+
+In this module, database access is fully decoupled from the Express MVC server (`app_server`) and isolated behind the standalone RESTful API layer (`app_api`) mounted at `/api` (case-insensitive, supporting `/API` as well). This separation allows the API to serve multiple clients—the Express Handlebars server, future Angular SPAs, and external HTTP callers such as Postman.
+
+### Objectives & Rubric Criteria Addressed
+
+1. **Separation of Concerns (`app_server` vs. `app_api`):**
+   - Removed embedded Mongoose/database models (`app_server/models/`) from the Express server layer so `app_server` has zero direct dependency on Mongoose or MongoDB.
+   - Refactored `app_server/controllers/travel.js` to act as an HTTP client that calls `GET /api/trips` via `fetch()` and passes the resulting JSON array (or fallback error message) into `app_server/views/travel.hbs`.
+2. **Standardized REST API Routes (`app_api/routes/index.js` & `app.js`):**
+   - `GET /api/trips`: Retrieves the full collection of trips as JSON (`200 OK`, or `404` when empty).
+   - `GET /api/trips/:tripCode`: Retrieves a matching trip by unique `code` parameter using Mongoose `Trip.find({ code: req.params.tripCode })`.
+   - Added JSON error handling in `app.js` so invalid `/api/*` requests return structured JSON payloads with proper HTTP status codes (`404`, `500`) instead of HTML error pages.
+3. **API Verification:**
+   - Verified `GET /api/trips`, `GET /API/trips`, `GET /api/trips/:tripCode` (`GALR210214`, `DAWR210315`, `CLAR210420`), `404` handling for unknown trip codes and unknown `/api/*` paths, CORS headers, and `/travel` rendering from the live API.
+
+---
+
 ## Module Four: Database Integration with MongoDB & Mongoose Schemas
 
 In this module, the Travlr Getaways application transitions from reading local JSON data files to a fully integrated **NoSQL persistence tier** powered by **MongoDB** and the **Mongoose** Object Data Modeling (ODM) library. The application now establishes a persistent database connection lifecycle, enforces schema validation contracts, seeds mock catalog data, exposes RESTful API endpoints delivering JSON payloads, and renders dynamic travel packages to the browser directly from the live database.
@@ -96,13 +114,13 @@ In the initial module, the customer-facing web application shell was established
 
 ---
 
-## Project Structure (Module Four)
+## Project Structure (Module Five)
 
 ```text
 travlr/
 ├── .gitignore                   # Ignores node_modules, build artifacts, logs, and OS files
 ├── README.md                    # Project documentation and setup guide
-├── app.js                       # Express app configuration, Mongoose connection, and API/MVC routing
+├── app.js                       # Express app configuration, Mongoose connection, JSON API error handling, and routing
 ├── bin/
 │   └── www                      # Server entry point and HTTP port listener (port 3000)
 ├── data/
@@ -123,11 +141,7 @@ travlr/
 ├── app_server/                  # MVC Server Architecture (Server-Side Rendering)
 │   ├── controllers/             # Controllers handling requests and rendering Handlebars views
 │   │   ├── main.js              # Home page controller
-│   │   └── travel.js            # Travel controller querying MongoDB via Mongoose Trip model
-│   ├── models/                  # Server model compatibility layer
-│   │   ├── db.js                # Database module export
-│   │   ├── seed.js              # Seed forwarder
-│   │   └── travlr.js            # Trip model export
+│   │   └── travel.js            # Travel controller fetching live JSON from GET /api/trips
 │   ├── routes/                  # Express customer-facing route definitions
 │   │   ├── index.js             # Routes for home (/)
 │   │   ├── travel.js            # Routes for /travel
@@ -170,9 +184,9 @@ travlr/
    git clone https://github.com/BoomBloom/CS-465.git
    cd CS-465
    ```
-2. Switch to the `module4` branch:
+2. Switch to the `module5` branch:
    ```bash
-   git checkout module4
+   git checkout module5
    ```
 3. Install dependencies:
    ```bash
@@ -241,5 +255,5 @@ Each course module builds progressively upon the previous one using dedicated br
 * `module2`: Refactoring to MVC architecture (`app_server` with controllers, routes, and Handlebars templates).
 * `module3`: Static HTML to templates with dynamic JSON (`data/trips.json` & Handlebars `{{#each}}`).
 * `module4`: Database integration with MongoDB, Mongoose schemas, database seeding, and REST API (`app_api`).
-* `module5` *(upcoming)*: RESTful API expansion and single-page application integration.
+* `module5`: Separation of Concerns refactoring decoupling `app_server` from Mongoose and wiring `GET /api/trips` and `GET /api/trips/:tripCode`.
 * `module6` - `module7` *(upcoming)*: Angular Single-Page Application (SPA) admin interface and JWT authentication.

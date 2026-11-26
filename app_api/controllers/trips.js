@@ -14,14 +14,14 @@ const tripsList = async (req, res) => {
     }
 };
 
-/* GET /api/trips/:tripCode - Retrieve a single trip by unique code */
+/* GET /api/trips/:tripCode - Retrieve a trip by unique code using Mongoose find() */
 const tripsFindByCode = async (req, res) => {
     try {
-        const trip = await Trip.findOne({ 'code': req.params.tripCode }).exec();
-        if (!trip) {
+        const trips = await Trip.find({ 'code': req.params.tripCode }).exec();
+        if (!trips || trips.length === 0) {
             return res.status(404).json({ message: `Trip not found with code: ${req.params.tripCode}` });
         }
-        return res.status(200).json(trip);
+        return res.status(200).json(trips);
     } catch (err) {
         return res.status(500).json(err);
     }
